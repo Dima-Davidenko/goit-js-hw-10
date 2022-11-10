@@ -6,10 +6,10 @@ export const loadingMessage = "Please wait while minions do their work :)";
 
 export const requestNameUrl = "https://restcountries.com/v3.1/name/";
 
-export const requestCapitalUrl = "https://restcountries.com/v3.1/capital/";
+export const requestCodesUrl = "https://restcountries.com/v3.1/alpha/";
 
-export const searchParams = new URLSearchParams({
-  fields: "name,capital,population,flags,languages",
+export const filterParams = new URLSearchParams({
+  fields: "name,capital,population,flags,languages,ccn3",
 });
 
 export const notiflixOpts = {
@@ -21,6 +21,9 @@ export const notiflixOpts = {
 };
 
 export const noMatchesMessage = "Oops, there is no country with that name";
+
+export const badResponse = "Something went wrong...";
+
 export const canntFetchMessage =
   "Sorry, it looks like the server isn't available...";
 export const exceedLimitMatchesMessage =

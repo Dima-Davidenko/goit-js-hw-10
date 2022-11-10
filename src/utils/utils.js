@@ -1,3 +1,5 @@
+import { codesListUkr } from "./codesListUkr.js";
+
 const loadingInfo = document.querySelector(".js-loading-info");
 
 export function showLoadingInfo() {
@@ -6,12 +8,13 @@ export function showLoadingInfo() {
 }
 
 export function hideLoadingInfo() {
-  hideNotify();
   loadingInfo.classList.add("invisible");
 }
 
 export function prepareCountryInfo(countryInfo) {
   const newInfo = { ...countryInfo };
+
+  countryInfo.ukrName = codesListUkr[countryInfo.ccn3];
 
   if (newInfo?.languages) {
     const arrayLanguages = Object.values(newInfo.languages);
