@@ -1,0 +1,9 @@
+<li>Click on country to show info</li>
+{{#each countries}}
+  <li>
+    <button class="link" data-index="{{@index}}">
+      <img class="flag" src="{{this.flags.svg}}" alt="" />
+      <span class="name">{{this.name.official}}</span>
+    </button>
+  </li>
+{{/each}}

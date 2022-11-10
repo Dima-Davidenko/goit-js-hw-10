@@ -1,0 +1,17 @@
+<p>Герб:
+  <img class="coat-of-arms" src="{{this.coatOfArms.svg}}" alt="" />
+</p>
+<p>Альтернативні назви:
+  {{#each this.altSpellings}}
+    <span class="name">{{this}}</span>
+  {{/each}}
+</p>
+<p>Площа: {{this.area}}</p>
+
+<p>Напрямок дорожньго руху: {{this.trafficDirection}}</p>
+<p>Інтернет-домен: {{this.cca2}}</p>
+<p>Валюта:
+  {{#each this.currenciesArray}}
+    <span class="name">{{this}}</span>
+  {{/each}}
+</p>

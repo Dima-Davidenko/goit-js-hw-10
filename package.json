@@ -1,0 +1,35 @@
+{
+  "name": "goit-js-hw-10",
+  "version": "1.0.0",
+  "description": "",
+  "source": "src/index.html",
+  "targets": {
+    "default": {
+      "distDir": "./output",
+      "publicUrl": "/goit-js-hw-10/"
+    }
+  },
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dima-Davidenko/goit-js-hw-10.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dima-Davidenko/goit-js-hw-10/issues"
+  },
+  "homepage": "https://github.com/Dima-Davidenko/goit-js-hw-10#readme",
+  "devDependencies": {
+    "parcel": "^2.7.0",
+    "parcel-transformer-hbs": "^1.0.4"
+  },
+  "dependencies": {
+    "lodash.debounce": "^4.0.8",
+    "notiflix": "^3.2.5"
+  }
+}
