@@ -1,8 +1,7 @@
 import debounce from "lodash.debounce";
 import StorageMdl from "./modules/storageMdl.js";
-
 import DataProcessMdl from "./modules/dataProcessMdl.js";
-import FetchMdl from "./modules/FetchMdl.js";
+import FetchMdl from "./modules/fetchMdl.js";
 import RenderMdl from "./modules/renderMdl.js";
 import RefsMdl from "./modules/refsMdl.js";
 import NotifyMdl from "./modules/notifyMdl.js";
@@ -21,6 +20,8 @@ function handleInputChange(event) {
     NotifyMdl.hideLoadingInfo();
     return;
   }
+
+  // NotifyMdl.showLoadingInfo();
 
   // If the search was in Ukrainian we don't need to filter it
 
@@ -53,7 +54,7 @@ function handleInputChange(event) {
   fetchResult
     .then((arrayOfCountries) => {
       console.log(arrayOfCountries);
-
+      NotifyMdl.hideLoadingInfo();
       // Filter name matching only with name.official and name.common
       const filteredArrayOfCountries = isFilterNeccessary
         ? DataProcessMdl.filterResult(arrayOfCountries, processedValue)
@@ -68,7 +69,7 @@ function handleInputChange(event) {
 
       // If there were no matches (including checking name.official and name.common)
       if (ukrNamesArrayOfCountries.length === 0) {
-        showNotification(Params.noMatchesMessage, "failure");
+        NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
         return;
       }
       // If only one country matches
@@ -92,7 +93,7 @@ function handleInputChange(event) {
         NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
       }
     })
-    .catch(FetchMdl.handleBadResponse);
+    .catch(handleBadResponse);
 }
 
 // Add action to button show more
@@ -104,13 +105,14 @@ function handleShowMoreInformation() {
     // Fetch all info about country by ccn3 code
     FetchMdl.fetchToServer({ listOfCodes: target.dataset.ccn3 })
       .then((countryInfo) => {
+        NotifyMdl.hideLoadingInfo();
         const preparedCountryInfo = DataProcessMdl.prepareCountryInfo(
           countryInfo[0]
         );
         RenderMdl.renderMoreInfo(preparedCountryInfo);
         console.log(preparedCountryInfo);
       })
-      .catch(FetchMdl.handleBadResponse);
+      .catch(handleBadResponse);
     showMoreBtn.removeEventListener("click", callback);
   });
 }
@@ -131,8 +133,23 @@ function handleCountryListClick({ target }) {
   handleShowMoreInformation();
 }
 
+function handleBadResponse(error) {
+  // If get bad response
+  switch (error.message) {
+    case "Failed to fetch":
+      NotifyMdl.showNotification(Params.canntFetchMessage, "failure");
+      break;
+    case "404":
+      NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
+      break;
+    default:
+      NotifyMdl.showNotification(Params.badResponse, "failure");
+      console.log(error);
+  }
+}
+
 RefsMdl.loadingInfoEl.insertAdjacentText("beforeend", Params.loadingMessage);
-RefsMdl.inputEl.addEventListener("input", RenderMdl.showLoadingInfo);
+RefsMdl.inputEl.addEventListener("input", NotifyMdl.showLoadingInfo);
 RefsMdl.countryListEl.addEventListener("click", handleCountryListClick);
 RefsMdl.inputEl.addEventListener(
   "input",

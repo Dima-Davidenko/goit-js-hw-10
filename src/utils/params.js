@@ -1,6 +1,6 @@
 const DEBOUNCE_DELAY = 600;
 
-const LIMIT_LIST_RESULT = 10;
+const LIMIT_LIST_RESULT = 12;
 
 const LOCAL_STORAGE_KEY = "countries";
 

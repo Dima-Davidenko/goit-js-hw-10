@@ -1,5 +1,4 @@
 import Params from "../utils/params.js";
-import NotifyMdl from "./notifyMdl.js";
 function fetchToServer({ listOfCodes, nameToFind, filter }) {
   const filterParams = filter ? Params.filterParams : "";
   if (listOfCodes) {
@@ -27,7 +26,6 @@ function fetchCountriesInfo({
 
   return fetch(`${requestUrl}${nameToFind}?${codes}${filterParams}`).then(
     (response) => {
-      NotifyMdl.hideLoadingInfo();
       if (response.ok) {
         return response.json();
       } else {
@@ -37,22 +35,6 @@ function fetchCountriesInfo({
   );
 }
 
-function handleBadResponse(error) {
-  // If get bad response
-  switch (error.message) {
-    case "Failed to fetch":
-      NotifyMdl.showNotification(Params.canntFetchMessage, "failure");
-      break;
-    case "404":
-      NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
-      break;
-    default:
-      NotifyMdl.showNotification(Params.badResponse, "failure");
-      console.log(error);
-  }
-}
-
 export default {
-  handleBadResponse,
   fetchToServer,
 };

@@ -14,11 +14,6 @@ function hideNotify() {
   if (notifyMessage) notifyMessage.style.opacity = 0;
 }
 
-function showLoadingInfo() {
-  hideNotify();
-  RefsMdl.loadingInfoEl.classList.remove("invisible");
-}
-
 function hideLoadingInfo() {
   RefsMdl.loadingInfoEl.classList.add("invisible");
 }
