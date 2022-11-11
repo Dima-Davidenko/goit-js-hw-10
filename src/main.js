@@ -1,11 +1,14 @@
 import debounce from "lodash.debounce";
+
 import StorageMdl from "./modules/storageMdl.js";
 import DataProcessMdl from "./modules/dataProcessMdl.js";
 import FetchMdl from "./modules/fetchMdl.js";
 import RenderMdl from "./modules/renderMdl.js";
 import RefsMdl from "./modules/refsMdl.js";
 import NotifyMdl from "./modules/notifyMdl.js";
+
 import Params from "./utils/params.js";
+
 import "./css/styles.css";
 import "./css/three-dots.css";
 
@@ -14,17 +17,13 @@ function handleInputChange(event) {
   const processedValue = DataProcessMdl.inputProcessing(event.target.value);
   // Clear all rendered information
   RenderMdl.cleanOutput();
-
   // If input is empty
   if (!processedValue) {
     NotifyMdl.hideLoadingInfo();
     return;
   }
-
-  // NotifyMdl.showLoadingInfo();
-
+  let fetchResult = null;
   // If the search was in Ukrainian we don't need to filter it
-
   let isFilterNeccessary = true;
   // If Ukrainian language
   if (processedValue.charCodeAt(0) >= 1072) {
@@ -40,7 +39,6 @@ function handleInputChange(event) {
       NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
       return;
     }
-
     // Fetch with list of countries' codes
     fetchResult = FetchMdl.fetchToServer({ listOfCodes, filter: true });
   } else {
@@ -50,25 +48,21 @@ function handleInputChange(event) {
       filter: true,
     });
   }
-
   fetchResult
     .then((arrayOfCountries) => {
-      console.log(arrayOfCountries);
+      // console.log(arrayOfCountries);
       NotifyMdl.hideLoadingInfo();
       // Filter name matching only with name.official and name.common
       const filteredArrayOfCountries = isFilterNeccessary
         ? DataProcessMdl.filterResult(arrayOfCountries, processedValue)
         : arrayOfCountries;
-
       // Add property with country name in Ukrainian
       const ukrNamesArrayOfCountries = DataProcessMdl.addUkrNameToResult(
         filteredArrayOfCountries
       );
-
-      // console.log(ukrNamesArrayOfCountries);
-
       // If there were no matches (including checking name.official and name.common)
       if (ukrNamesArrayOfCountries.length === 0) {
+        RenderMdl.cleanOutput();
         NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
         return;
       }
@@ -90,31 +84,11 @@ function handleInputChange(event) {
       }
       // If more than 10 countries match
       if (ukrNamesArrayOfCountries.length > 10) {
+        RenderMdl.cleanOutput();
         NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
       }
     })
     .catch(handleBadResponse);
-}
-
-// Add action to button show more
-function handleShowMoreInformation() {
-  const showMoreBtn = document.querySelector(".show-more");
-  showMoreBtn.addEventListener("click", function callback({ target }) {
-    NotifyMdl.showLoadingInfo();
-    target.parentNode.removeChild(target);
-    // Fetch all info about country by ccn3 code
-    FetchMdl.fetchToServer({ listOfCodes: target.dataset.ccn3 })
-      .then((countryInfo) => {
-        NotifyMdl.hideLoadingInfo();
-        const preparedCountryInfo = DataProcessMdl.prepareCountryInfo(
-          countryInfo[0]
-        );
-        RenderMdl.renderMoreInfo(preparedCountryInfo);
-        console.log(preparedCountryInfo);
-      })
-      .catch(handleBadResponse);
-    showMoreBtn.removeEventListener("click", callback);
-  });
 }
 
 function handleCountryListClick({ target }) {
@@ -133,8 +107,30 @@ function handleCountryListClick({ target }) {
   handleShowMoreInformation();
 }
 
+// Add action to button show more
+function handleShowMoreInformation() {
+  const showMoreBtn = document.querySelector(".show-more");
+  showMoreBtn.addEventListener("click", function callback({ target }) {
+    NotifyMdl.showLoadingInfo();
+    target.parentNode.removeChild(target);
+    // Fetch all info about country by ccn3 code
+    FetchMdl.fetchToServer({ listOfCodes: target.dataset.ccn3 })
+      .then((countryInfo) => {
+        NotifyMdl.hideLoadingInfo();
+        const preparedCountryInfo = DataProcessMdl.prepareCountryInfo(
+          countryInfo[0]
+        );
+        RenderMdl.renderMoreInfo(preparedCountryInfo);
+        // console.log(preparedCountryInfo);
+      })
+      .catch(handleBadResponse);
+    showMoreBtn.removeEventListener("click", callback);
+  });
+}
+
 function handleBadResponse(error) {
   // If get bad response
+  RenderMdl.cleanOutput();
   switch (error.message) {
     case "Failed to fetch":
       NotifyMdl.showNotification(Params.canntFetchMessage, "failure");

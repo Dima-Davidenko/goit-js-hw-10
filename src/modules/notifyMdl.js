@@ -1,10 +1,8 @@
-import RenderMdl from "./renderMdl.js";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 import Params from "../utils/params.js";
 import RefsMdl from "./refsMdl.js";
 
 function showNotification(message = "", type = "info") {
-  RenderMdl.cleanOutput();
   hideLoadingInfo();
   Notify[type](message, Params.notiflixOpts);
 }
@@ -15,12 +13,16 @@ function hideNotify() {
 }
 
 function hideLoadingInfo() {
-  RefsMdl.loadingInfoEl.classList.add("invisible");
+  if (!RefsMdl.loadingInfoEl.classList.contains("invisible")) {
+    RefsMdl.loadingInfoEl.classList.add("invisible");
+  }
 }
 
 function showLoadingInfo() {
   hideNotify();
-  RefsMdl.loadingInfoEl.classList.remove("invisible");
+  if (RefsMdl.loadingInfoEl.classList.contains("invisible")) {
+    RefsMdl.loadingInfoEl.classList.remove("invisible");
+  }
 }
 
 export default {
