@@ -5,7 +5,6 @@ import extendedCountryInfoTpl from "./templates/extendedCountryInfo.hbs";
 import countryListTpl from "./templates/countryList.hbs";
 import { Notify } from "notiflix/build/notiflix-notify-aio";
 import { ukrCountryList } from "./utils/countryList.js";
-import { codesListUkr } from "./utils/codesListUkr.js";
 import {
   notiflixOpts,
   noMatchesMessage,
@@ -25,6 +24,7 @@ import {
   showLoadingInfo,
   hideLoadingInfo,
   prepareCountryInfo,
+  addUkrNameToResult,
 } from "./utils/utils.js";
 
 const refs = {
@@ -169,15 +169,6 @@ function findCountriesCodesInUkrainian(inputValue) {
   return listOfCodes;
 }
 
-// Add property with name in Ukrainian to resulting array of countries
-function addUkrNameToResult(arrayOfCountries) {
-  const newArray = [...arrayOfCountries];
-  for (const country of newArray) {
-    country.ukrName = codesListUkr[country.ccn3];
-  }
-  return newArray;
-}
-
 // Show on page info about chosen country (When only one country matches or user clicked directly
 // on country name in list)
 function renderCountryInfo(country) {
@@ -202,20 +193,12 @@ function handleShowMoreInformation() {
 function fetchMoreInfoAboutCountry(ccn3) {
   // Remove show more button
   refs.showMoreBtn.parentNode.removeChild(refs.showMoreBtn);
-  fetch(`${requestCodesUrl}${ccn3}`)
-    .then((response) => {
-      hideLoadingInfo();
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(response.status);
-      }
-    })
+
+  fetchCountriesInfo({
+    requestUrl: requestCodesUrl,
+    listOfCodes: ccn3,
+  })
     .then((countryInfo) => {
-      if (countryInfo.length !== 1) {
-        console.log("Fetch Error " + countryInfo.length);
-        return;
-      }
       renderMoreInfo(countryInfo[0]);
       console.log(countryInfo);
     })

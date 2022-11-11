@@ -1,4 +1,4 @@
-import { codesListUkr } from "./codesListUkr.js";
+import { ukrCountryList } from "./countryList.js";
 
 const loadingInfo = document.querySelector(".js-loading-info");
 
@@ -14,7 +14,7 @@ export function hideLoadingInfo() {
 export function prepareCountryInfo(countryInfo) {
   const newInfo = { ...countryInfo };
 
-  countryInfo.ukrName = codesListUkr[countryInfo.ccn3];
+  countryInfo.ukrName = ukrCountryList[0][countryInfo.ccn3];
 
   if (newInfo?.languages) {
     const arrayLanguages = Object.values(newInfo.languages);
@@ -50,6 +50,15 @@ export function prepareCountryInfo(countryInfo) {
   newInfo.trafficDirection =
     countryInfo?.car?.side === "left" ? "Лівосторонній" : "Правосторонній";
   return newInfo;
+}
+
+// Add property with name in Ukrainian to resulting array of countries
+export function addUkrNameToResult(arrayOfCountries) {
+  const newArray = [...arrayOfCountries];
+  for (const country of newArray) {
+    country.ukrName = ukrCountryList[0][country.ccn3];
+  }
+  return newArray;
 }
 
 function prepareArrayForRendering(array) {
