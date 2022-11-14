@@ -48,7 +48,7 @@ const filterParams = new URLSearchParams({
 const notiflixOpts = {
   showOnlyTheLastOne: true,
   clickToClose: true,
-  timeout: 1000006000,
+  timeout: 6000,
   width: "500px",
   className: "notify-options",
   position: "center-top",
