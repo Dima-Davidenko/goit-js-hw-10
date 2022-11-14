@@ -103,7 +103,7 @@ function processFetchResult({
 }
 
 function handleCountryListClick({ target }) {
-  const button = target.closest(".link");
+  const button = target.closest(".country-list__btn");
   if (!button) return;
   const index = +button.dataset.index;
   const savedCountryList = StorageMdl.load(Params.LOCAL_STORAGE_KEY);
@@ -122,7 +122,7 @@ function handleCountryListClick({ target }) {
 
 // Add action to button show more
 function handleShowMoreInformation() {
-  const showMoreBtn = document.querySelector(".country-list__btn");
+  const showMoreBtn = document.querySelector(".card__button");
   showMoreBtn.addEventListener("click", function callback({ target }) {
     NotifyMdl.showLoadingInfo();
     target.parentNode.removeChild(target);
