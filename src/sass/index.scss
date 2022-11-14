@@ -1,0 +1,11 @@
+@import "./utils/variables";
+
+@import "~node_modules/modern-normalize/modern-normalize.css";
+@import "./base/base";
+@import "./base/container";
+
+@import "./components/loading-dots";
+@import "./components/gallery";
+@import "./components/notify-options";
+
+@import "./layout/main-page";

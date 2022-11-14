@@ -1,0 +1,22 @@
+<h2 class="gallery__title">Some related to this country pictures from
+  Pixabay.com</h2>
+<a class="gallery__pixabay-link" href="pixabay.com"><img
+    class="gallery__pixabay-img"
+    width="150"
+    src="{{logo}}"
+    alt="pixabay.com"
+  /></a>
+<div class="gallery__container">
+  {{#each images}}
+    <div class="gallery__item">
+      <a class="gallery__link" href="{{this.largeImageURL}}">
+        <img
+          class="gallery__image"
+          src="{{this.previewURL}}"
+          data-source="{{this.largeImageURL}}"
+          alt="{{this.tags}}"
+        />
+      </a>
+    </div>
+  {{/each}}
+</div>

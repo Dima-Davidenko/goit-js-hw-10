@@ -1,17 +1,44 @@
-<p>Герб:
-  <img class="coat-of-arms" src="{{this.coatOfArms.svg}}" alt="" />
-</p>
-<p>Альтернативні назви:
-  {{#each this.altSpellings}}
-    <span class="name">{{this}}</span>
-  {{/each}}
-</p>
-<p>Площа: {{this.area}}</p>
-
-<p>Напрямок дорожньго руху: {{this.trafficDirection}}</p>
-<p>Інтернет-домен: {{this.cca2}}</p>
-<p>Валюта:
-  {{#each this.currenciesArray}}
-    <span class="name">{{this}}</span>
-  {{/each}}
-</p>
+<div class="card">
+  {{#if this.coatOfArms}}
+    <h2 class="card__title">Офіційний герб країни</h2>
+    <img class="card__coat-of-arms" src="{{this.coatOfArms.svg}}" alt="" />
+  {{/if}}
+  <div class="card__container">
+    {{#if this.altSpellings}}
+      <h2 class="card__title">Альтернативні назви:</h2>
+      <p class="card__info">
+        {{#each this.altSpellings}}
+          <span class="name">{{this}}</span>
+        {{/each}}
+      </p>
+    {{/if}}
+  </div>
+  {{#if this.area}}
+    <div class="card__container">
+      <h2 class="card__title">Площа:</h2>
+      <p class="card__info">{{this.area}}</p>
+    </div>
+  {{/if}}
+  <div class="card__container">
+    <h2 class="card__title">Напрямок дорожньго руху:</h2>
+    <p class="card__info">{{this.trafficDirection}}</p>
+  </div>
+  <div class="card__container">
+    <h2 class="card__title">Інтернет-домен:</h2>
+    <p class="card__info">{{this.cca2}}</p>
+  </div>
+  <div class="card__container">
+    <h2 class="card__title">Валюта:</h2>
+    <p class="card__info">
+      {{#each this.currenciesArray}}
+        <span class="name">{{this}}</span>
+      {{/each}}
+    </p>
+  </div>
+  {{#if this.continent}}
+    <div class="card__container">
+      <h2 class="card__title">Частина світу:</h2>
+      <p class="card__info">{{this.continent}}</p>
+    </div>
+  {{/if}}
+</div>

@@ -1,7 +1,8 @@
 import RefsMdl from "./refsMdl.js";
-import countryInfoTpl from "../templates/countryInfo.hbs";
-import extendedCountryInfoTpl from "../templates/extendedCountryInfo.hbs";
-import countryListTpl from "../templates/countryList.hbs";
+import countryInfoTpl from "../../templates/countryInfo.hbs";
+import extendedCountryInfoTpl from "../../templates/extendedCountryInfo.hbs";
+import countryListTpl from "../../templates/countryList.hbs";
+import galleryTpl from "../../templates/gallery.hbs";
 
 function renderMoreInfo(countryInfo) {
   console.log(countryInfo);
@@ -27,6 +28,15 @@ function renderCountryInfo(country) {
 function cleanOutput() {
   RefsMdl.countryInfoEl.innerHTML = "";
   RefsMdl.countryListEl.innerHTML = "";
+  RefsMdl.galleryBlockEl.innerHTML = "";
+}
+
+function renderGallery(arrImagesObjects) {
+  const img = new URL("../../img/pixabayLogo.svg", import.meta.url);
+  RefsMdl.galleryBlockEl.innerHTML = galleryTpl({
+    images: arrImagesObjects,
+    logo: img.pathname,
+  });
 }
 
 export default {
@@ -34,4 +44,5 @@ export default {
   renderCountryList,
   renderCountryInfo,
   cleanOutput,
+  renderGallery,
 };

@@ -1,12 +1,13 @@
 import { ukrCountryList } from "../utils/countryList.js";
 
 function inputProcessing(inputValue) {
-  return inputValue.trim();
+  return inputValue.trim().toLowerCase();
 }
 
-function prepareCountryInfo(countryInfo) {
+function prepareCountryInfo({ countryInfo, short = false }) {
   const newInfo = { ...countryInfo };
 
+  // Add property with country name in Ukrainian
   newInfo.ukrName = ukrCountryList[newInfo.ccn3];
 
   if (newInfo?.languages) {
@@ -16,45 +17,48 @@ function prepareCountryInfo(countryInfo) {
 
   if (newInfo?.capital) {
     newInfo.arrayCapitals = prepareArrayForRendering(newInfo.capital);
-    newInfo.firstCapital = newInfo.capital[0];
+    newInfo.firstCapital = newInfo.capital[0] ? newInfo.capital[0] : null;
   }
 
-  if (countryInfo.altSpellings) {
+  if (countryInfo?.altSpellings) {
     newInfo.altSpellings = prepareArrayForRendering(newInfo.altSpellings);
     newInfo.altSpellings.shift();
   }
 
-  if (newInfo.population) {
+  if (newInfo?.population) {
     newInfo.population = splitNumber(newInfo.population);
   }
 
-  if (newInfo.area) {
-    newInfo.area = splitNumber(newInfo.area);
-  }
-
-  if (newInfo.currencies) {
-    newInfo.currenciesArray = [];
-    const keys = Object.keys(newInfo.currencies);
-    for (const key of keys) {
-      newInfo.currenciesArray.push(newInfo.currencies[key].name);
+  if (!short) {
+    newInfo.area = newInfo?.area > 0 ? splitNumber(newInfo.area) : null;
+    newInfo.coatOfArms = newInfo?.coatOfArms.svg ? newInfo.coatOfArms : null;
+    if (newInfo?.currencies) {
+      newInfo.currenciesArray = [];
+      const keys = Object.keys(newInfo.currencies);
+      for (const key of keys) {
+        newInfo.currenciesArray.push(newInfo.currencies[key].name);
+      }
+      newInfo.currenciesArray = prepareArrayForRendering(
+        newInfo.currenciesArray
+      );
     }
-    newInfo.currenciesArray = prepareArrayForRendering(newInfo.currenciesArray);
-  }
-  if (newInfo?.car?.side) {
-    newInfo.trafficDirection =
-      newInfo?.car?.side === "left" ? "Лівосторонній" : "Правосторонній";
+    if (newInfo?.car?.side) {
+      newInfo.trafficDirection =
+        newInfo.car.side === "left" ? "Лівосторонній" : "Правосторонній";
+    }
+    newInfo.continent = newInfo?.continents.length
+      ? newInfo.continents[0]
+      : null;
   }
 
   return newInfo;
 }
 
 // Add property with name in Ukrainian to resulting array of countries
-function addUkrNameToResult(arrayOfCountries) {
-  const newArray = [...arrayOfCountries];
-  for (const country of newArray) {
+function processListOfCountries(arrayOfCountries) {
+  for (const country of arrayOfCountries) {
     country.ukrName = ukrCountryList[country.ccn3];
   }
-  return newArray;
 }
 
 function prepareArrayForRendering(array) {
@@ -104,7 +108,7 @@ export default {
   inputProcessing,
   prepareArrayForRendering,
   prepareCountryInfo,
-  addUkrNameToResult,
+  processListOfCountries,
   findCountriesCodesInUkrainian,
   filterResult,
 };

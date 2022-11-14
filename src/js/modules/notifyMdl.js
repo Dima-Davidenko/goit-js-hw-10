@@ -4,7 +4,12 @@ import RefsMdl from "./refsMdl.js";
 
 function showNotification(message = "", type = "info") {
   hideLoadingInfo();
-  Notify[type](message, Params.notiflixOpts);
+  const windowInnerWidth = +window.innerWidth;
+  let fontSize = "15px";
+  if (windowInnerWidth >= 768) {
+    fontSize = "20px";
+  }
+  Notify[type](message, { ...Params.notiflixOpts, fontSize });
 }
 
 function hideNotify() {

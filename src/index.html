@@ -4,16 +4,28 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homework 10</title>
+    <title>Interesting countries</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./sass/index.scss" />
   </head>
   <body>
-    <input type="text" id="search-box" />
-    <ul class="country-list"></ul>
-    <div class="country-info"></div>
-    <div class="js-loading-info invisible">
-      <div class="dot-spin"></div>
+    <div class="container">
+      <div class="loading-info">
+        <div class="js-loading-info invisible">
+          <div class="dot-spin"></div>
+        </div>
+      </div>
+      <input type="text" id="search-box" />
+      <ul class="country-list"></ul>
+      <div class="country-info"></div>
+      <div class="gallery"></div>
+      <div class="notify"></div>
     </div>
-    <div class="notify"></div>
     <script src="./main.js" type="module"></script>
   </body>
 </html>

@@ -1,14 +1,35 @@
-<img class="flag" src="{{this.flags.svg}}" alt="" />
-<span class="name">{{this.name.official}}</span>
-<span class="name">{{this.ukrName}}</span>
-<p>Столиця:
-  {{#each this.arrayCapitals}}
-    <span class="name">{{this}}</span>
-  {{/each}}
-</p>
-<p>Кількість населення: {{this.population}}</p>
-<p>Офіційні мови:
-  {{#each this.arrayLanguages}}
-    <span class="name">{{this}}</span>
-  {{/each}}</p>
-<button class="show-more" data-ccn3="{{this.ccn3}}">More information</button>
+<div class="card">
+  <img
+    class="card__flag"
+    src="{{this.flags.svg}}"
+    alt="{{this.name.official}} flag"
+  />
+  <div class="card__container">
+    <h2 class="card__title">Офіційна назва:</h2>
+    <p class="card__info">{{this.ukrName}}</p>
+    <p class="card__info">{{this.name.official}}</p>
+  </div>
+  {{#if this.firstCapital}}
+    <div class="card__container">
+      <h2 class="card__title">Столиця:</h2>
+      <p class="card__info">
+        <span class="card__info">{{this.firstCapital}}</span>
+      </p>
+    </div>
+  {{/if}}
+  <div class="card__container">
+    <h2 class="card__title">Кількість населення:</h2>
+    <p class="card__info">
+      {{this.population}}
+    </p>
+  </div>
+  <div class="card__container">
+    <h2 class="card__title">Офіційні мови:</h2>
+    <p class="card__info">
+      {{#each this.arrayLanguages}}
+        <span class="card__info">{{this}}</span>
+      {{/each}}
+    </p>
+  </div>
+  <button class="card__button" data-ccn3="{{this.ccn3}}">More information</button>
+</div>

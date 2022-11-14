@@ -25,11 +25,14 @@
   },
   "homepage": "https://github.com/Dima-Davidenko/goit-js-hw-10#readme",
   "devDependencies": {
+    "@parcel/transformer-sass": "^2.8.0",
     "parcel": "^2.7.0",
     "parcel-transformer-hbs": "^1.0.4"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "notiflix": "^3.2.5"
+    "modern-normalize": "^1.1.0",
+    "notiflix": "^3.2.5",
+    "simplelightbox": "^2.10.4"
   }
 }

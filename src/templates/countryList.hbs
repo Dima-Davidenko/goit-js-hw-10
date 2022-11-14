@@ -1,10 +1,12 @@
 <li>Click on country to show info</li>
 {{#each countries}}
-  <li>
-    <button class="link" data-index="{{@index}}">
-      <img class="flag" src="{{this.flags.svg}}" alt="" />
-      <span class="name">{{this.name.official}}</span>
-      <span class="name">{{this.ukrName}}</span>
+  <li class="country-list__item">
+    <button class="country-list__btn" data-index="{{@index}}">
+      <img class="country-list__flag" src="{{this.flags.svg}}" alt="" />
+      <div class="country-list__titles">
+        <span class="country-list__name">{{this.name.official}}</span>
+        <span class="country-list__name">{{this.ukrName}}</span>
+      </div>
     </button>
   </li>
 {{/each}}
