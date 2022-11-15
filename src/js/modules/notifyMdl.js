@@ -18,16 +18,12 @@ function hideNotify() {
 }
 
 function hideLoadingInfo() {
-  if (!RefsMdl.loadingInfoEl.classList.contains("invisible")) {
-    RefsMdl.loadingInfoEl.classList.add("invisible");
-  }
+  RefsMdl.loadingInfoEl.classList.add("invisible");
 }
 
 function showLoadingInfo() {
   hideNotify();
-  if (RefsMdl.loadingInfoEl.classList.contains("invisible")) {
-    RefsMdl.loadingInfoEl.classList.remove("invisible");
-  }
+  RefsMdl.loadingInfoEl.classList.remove("invisible");
 }
 
 export default {

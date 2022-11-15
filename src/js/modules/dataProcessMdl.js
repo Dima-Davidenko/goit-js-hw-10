@@ -80,18 +80,12 @@ function splitNumber(number) {
 
 function findCountriesCodesInUkrainian(inputValue) {
   const listOfCodes = [];
-  const inputValueLowCase = inputValue.toLowerCase();
   const keys = Object.keys(ukrCountryList);
   keys.forEach((key) => {
-    if (ukrCountryList[key].toLowerCase().includes(inputValueLowCase)) {
+    if (ukrCountryList[key].toLowerCase().includes(inputValue)) {
       listOfCodes.push(key);
     }
   });
-  // for (const country of ukrCountryList) {
-  //   if (country.ukrNameLowCase.includes(inputValueLowCase)) {
-  //     listOfCodes.push(country.numericCode);
-  //   }
-  // }
   return listOfCodes;
 }
 

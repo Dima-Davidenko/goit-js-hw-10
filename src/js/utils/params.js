@@ -57,6 +57,7 @@ const notiflixOpts = {
 const badResponse = "Something went wrong...";
 
 const canntFetchMessage = "Sorry, it looks like the server isn't available...";
+
 const exceedLimitMatchesMessage =
   "Too many matches found. Please enter a more specific name.";
 

@@ -172,6 +172,7 @@ function handleBadResponse(error) {
 }
 
 RefsMdl.loadingInfoEl.insertAdjacentText("beforeend", Params.loadingMessage);
+
 RefsMdl.inputEl.addEventListener("input", NotifyMdl.showLoadingInfo);
 RefsMdl.inputEl.addEventListener("focus", handleInputChange);
 RefsMdl.countryListEl.addEventListener("click", handleCountryListClick);
