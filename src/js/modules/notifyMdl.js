@@ -2,6 +2,15 @@ import { Notify } from "notiflix/build/notiflix-notify-aio";
 import Params from "../utils/params.js";
 import RefsMdl from "./refsMdl.js";
 
+const notiflixOpts = {
+  showOnlyTheLastOne: true,
+  clickToClose: true,
+  timeout: 6000,
+  width: "500px",
+  className: "notify-options",
+  position: "center-top",
+};
+
 function showNotification(message = "", type = "info") {
   hideLoadingInfo();
   const windowInnerWidth = +window.innerWidth;
@@ -9,7 +18,7 @@ function showNotification(message = "", type = "info") {
   if (windowInnerWidth >= 768) {
     fontSize = "20px";
   }
-  Notify[type](message, { ...Params.notiflixOpts, fontSize });
+  Notify[type](message, { ...notiflixOpts, fontSize });
 }
 
 function hideNotify() {

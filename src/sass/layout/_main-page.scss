@@ -1,7 +1,19 @@
+.header h1 {
+  text-align: center;
+}
+
+.header :not(:last-child) {
+  margin-bottom: 10px;
+}
+
 .loading-info {
   display: flex;
   min-width: 320px;
   height: 100px;
+}
+
+.input-name {
+  width: 300px;
 }
 
 .country-list {

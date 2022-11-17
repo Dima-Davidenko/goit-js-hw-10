@@ -1,18 +1,41 @@
-import StorageMdl from "./storageMdl.js";
+import DataStorage from "../utils/dataStorage.js";
 import FetchMdl from "./fetchMdl.js";
 import SimpleLightbox from "simplelightbox";
+import RenderMdl from "./renderMdl.js";
+import RefsMdl from "./refsMdl.js";
 
 import Params from "../utils/params.js";
 
-function initLightBox() {
-  return new SimpleLightbox(...Params.lightboxParams);
+const lightboxParams = [
+  ".gallery__container a",
+  {
+    captionsData: "alt",
+    captionDelay: 250,
+    animationSlide: false,
+    animationSpeed: 500,
+    maxZoom: 5,
+  },
+];
+
+function renderGallery() {
+  fetchPixabayInfoForMarkup().then((arrResults) => {
+    // Get random images for gallery
+    const arrImagesForGallery = getArrayForGallery(arrResults);
+    // console.log(arrImagesForGallery);
+    if (arrImagesForGallery.length > 0) {
+      RenderMdl.renderGallery(arrImagesForGallery);
+      // Initialize lightbox
+      RefsMdl.lightboxInstance = new SimpleLightbox(...lightboxParams);
+    }
+  });
 }
 
-function getPixabayInfoForMarkup() {
-  const pixabayQueries = getQueries().map((query) =>
-    FetchMdl.prepareToFetch({ images: query })
+function fetchPixabayInfoForMarkup() {
+  makeQueriesForPixabay();
+  const multiplyFetchesToPixabay = DataStorage.pixabayQueries.map((query) =>
+    FetchMdl.fetchPictures({ query })
   );
-  return Promise.allSettled(pixabayQueries);
+  return Promise.allSettled(multiplyFetchesToPixabay);
 }
 
 function getArrayForGallery(arrResults) {
@@ -21,7 +44,7 @@ function getArrayForGallery(arrResults) {
     ({ status }) => status === "fulfilled"
   );
   const allImages = filteredResults.flatMap(({ value }) => value.hits);
-  console.log(allImages);
+  // console.log(allImages);
   const listOfIDs = [];
   const uniqueImages = allImages.filter(({ id }) => {
     if (!listOfIDs.includes(id)) {
@@ -44,33 +67,18 @@ function getArrayForGallery(arrResults) {
   return randomImagesForGallery;
 }
 
-function getQueries() {
-  return StorageMdl.load(Params.PIXABAY_STORAGE_KEY);
-}
-
-function createPixabayQueries(countryInfo) {
+function makeQueriesForPixabay() {
   const queries = [
-    `${countryInfo.name.common} people`,
-    `${countryInfo.name.common} nature`,
-    countryInfo.name.common,
+    `${DataStorage.oneCountryInfo.name.common}+people`,
+    `${DataStorage.oneCountryInfo.name.common}+nature`,
+    DataStorage.oneCountryInfo.name.common,
   ];
-  if (countryInfo.capital.length === 1) {
-    queries.push(`City ${countryInfo.capital[0]}`);
+  if (DataStorage.oneCountryInfo.capital.length === 1) {
+    queries.push(`City+${DataStorage.oneCountryInfo.capital[0]}`);
   }
-  return queries;
-}
-
-function saveQueriesForPixabay(countryInfo) {
-  StorageMdl.save(
-    Params.PIXABAY_STORAGE_KEY,
-    createPixabayQueries(countryInfo)
-  );
+  DataStorage.pixabayQueries = queries;
 }
 
 export default {
-  getPixabayInfoForMarkup,
-  createPixabayQueries,
-  saveQueriesForPixabay,
-  getArrayForGallery,
-  initLightBox,
+  renderGallery,
 };

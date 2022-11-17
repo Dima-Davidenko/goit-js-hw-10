@@ -1,28 +1,30 @@
 import RefsMdl from "./refsMdl.js";
+import DataStorage from "../utils/dataStorage.js";
+
 import countryInfoTpl from "../../templates/countryInfo.hbs";
 import extendedCountryInfoTpl from "../../templates/extendedCountryInfo.hbs";
 import countryListTpl from "../../templates/countryList.hbs";
 import galleryTpl from "../../templates/gallery.hbs";
 
-function renderMoreInfo(countryInfo) {
-  console.log(countryInfo);
+function renderMoreInfo() {
+  // console.log(DataStorage.extendedOneCountryInfo);
   RefsMdl.countryInfoEl.insertAdjacentHTML(
     "beforeend",
-    extendedCountryInfoTpl(countryInfo)
+    extendedCountryInfoTpl(DataStorage.extendedOneCountryInfo)
   );
 }
 
-function renderCountryList(arrayOfCountries) {
+function renderCountryList() {
   RefsMdl.countryListEl.innerHTML = countryListTpl({
-    countries: arrayOfCountries,
+    countries: DataStorage.filteredArrayOfCountries,
   });
 }
 
 // Show on page info about chosen country (When only one country matches or user clicked directly
 // on country name in list)
-function renderCountryInfo(country) {
+function renderCountryInfo() {
   // Process resulting object with country info and prepare it for rendering with handlebars template func
-  RefsMdl.countryInfoEl.innerHTML = countryInfoTpl(country);
+  RefsMdl.countryInfoEl.innerHTML = countryInfoTpl(DataStorage.oneCountryInfo);
 }
 
 function cleanOutput() {

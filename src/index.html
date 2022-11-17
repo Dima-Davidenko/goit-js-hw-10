@@ -15,12 +15,33 @@
   </head>
   <body>
     <div class="container">
+      <section class="header">
+        <h1>Вітаємо на нашому сервісі пошуку інформації про країни світу.</h1>
+        <p>
+          Тут Ви зможете знайти інформацію про країну просто набрав її назву або
+          частину назви українською чи англійською мовами
+        </p>
+        <p>
+          У списку країн Ви можете клікнути по назві країни для відображення
+          інформації про неї.
+        </p>
+        <p>
+          Натиснувши кнопку "Більше інформації" буде завантажено розширену
+          інформацію про країну та відобразиться галерея з зображеннями, що
+          стосуються цієї країни. Бажаємо приємного перегляду
+        </p>
+      </section>
       <div class="loading-info">
         <div class="js-loading-info invisible">
           <div class="dot-spin"></div>
         </div>
       </div>
-      <input type="text" id="search-box" />
+      <input
+        class="input-name"
+        type="text"
+        id="search-box"
+        placeholder="Введіть Україна або Ukraine"
+      />
       <ul class="country-list"></ul>
       <div class="country-info"></div>
       <div class="gallery"></div>

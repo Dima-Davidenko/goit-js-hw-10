@@ -56,17 +56,18 @@ function prepareCountryInfo({ countryInfo, short = false }) {
 
 // Add property with name in Ukrainian to resulting array of countries
 function processListOfCountries(arrayOfCountries) {
-  for (const country of arrayOfCountries) {
-    country.ukrName = ukrCountryList[country.ccn3];
-  }
+  arrayOfCountries.forEach(
+    (country) => (country.ukrName = ukrCountryList[country.ccn3])
+  );
 }
 
 function prepareArrayForRendering(array) {
-  const newArray = [...array];
-  for (let i = 0; i < newArray.length - 1; i += 1) {
-    newArray[i] += ",";
-  }
-  return newArray;
+  return [...array].map((item, index, arr) => {
+    if (index !== arr.length - 1) {
+      return item + ", ";
+    }
+    return item;
+  });
 }
 
 function splitNumber(number) {
@@ -100,7 +101,6 @@ function filterResult(arrayOfCountries, inputValue) {
 
 export default {
   inputProcessing,
-  prepareArrayForRendering,
   prepareCountryInfo,
   processListOfCountries,
   findCountriesCodesInUkrainian,

@@ -1,6 +1,5 @@
 import debounce from "lodash.debounce";
 
-import StorageMdl from "./js/modules/storageMdl.js";
 import DataProcessMdl from "./js/modules/dataProcessMdl.js";
 import FetchMdl from "./js/modules/fetchMdl.js";
 import RenderMdl from "./js/modules/renderMdl.js";
@@ -9,92 +8,103 @@ import NotifyMdl from "./js/modules/notifyMdl.js";
 import PixabayMdl from "./js/modules/pixabayMdl.js";
 
 import Params from "./js/utils/params.js";
+import DataStorage from "./js/utils/dataStorage.js";
 
 import "simplelightbox/dist/simple-lightbox.css";
 
 function handleInputChange(event) {
   // "Clean" input value
-  const processedValue = DataProcessMdl.inputProcessing(event.target.value);
+  DataStorage.processedValue = DataProcessMdl.inputProcessing(
+    event.target.value
+  );
   // Clear all rendered information
   RenderMdl.cleanOutput();
   // If input is empty
-  if (!processedValue) {
+  if (!DataStorage.processedValue) {
     NotifyMdl.hideLoadingInfo();
     return;
   }
-  let fetchResult = null;
   // If the search was in Ukrainian we don't need to filter it
-  let isFilterNeccessary = true;
+  DataStorage.isFilterNeccessary = true;
   // If Ukrainian language
-  if (processedValue.charCodeAt(0) >= 1072) {
-    isFilterNeccessary = false;
-    // Get codes of matched countries
-    const listOfCodes =
-      DataProcessMdl.findCountriesCodesInUkrainian(processedValue);
-    // If nothing matched
-    if (listOfCodes.length === 0) {
-      NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
-      return;
-    } else if (listOfCodes.length > Params.LIMIT_LIST_RESULT) {
-      NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
-      return;
-    }
-    // Fetch with list of countries' codes
-    fetchResult = FetchMdl.prepareToFetch({
-      listOfCodes: listOfCodes.toString(),
-      filter: true,
-    });
+  if (DataStorage.processedValue.charCodeAt(0) >= 1072) {
+    handleCyrillicInput();
   } else {
-    //If English language - fetch directly with entered in input value
-    fetchResult = FetchMdl.prepareToFetch({
-      nameToFind: processedValue,
+    DataStorage.fetchResult = FetchMdl.fetchCountriesByName({
+      nameToFind: DataStorage.processedValue,
       filter: true,
     });
   }
-  processFetchResult({ fetchResult, isFilterNeccessary, processedValue });
+  if (DataStorage.fetchResult) {
+    handleFetchResult();
+  }
 }
 
-function processFetchResult({
-  fetchResult,
-  isFilterNeccessary,
-  processedValue,
-}) {
-  fetchResult
+function handleCyrillicInput() {
+  DataStorage.isFilterNeccessary = false;
+  // Get codes of matched countries
+  const listOfCodes = DataProcessMdl.findCountriesCodesInUkrainian(
+    DataStorage.processedValue
+  );
+  // If nothing matched
+  if (listOfCodes.length === 0) {
+    NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
+    DataStorage.fetchResult = null;
+    return;
+  } else if (listOfCodes.length > Params.LIMIT_LIST_RESULT) {
+    NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
+    DataStorage.fetchResult = null;
+    return;
+  }
+  DataStorage.fetchResult = FetchMdl.fetchCountriesByCodes({
+    listOfCodes: listOfCodes.toString(),
+    filter: true,
+  });
+}
+
+function handleFetchResult() {
+  DataStorage.fetchResult
     .then((arrayOfCountries) => {
-      console.log(arrayOfCountries);
+      // console.log(arrayOfCountries);
       NotifyMdl.hideLoadingInfo();
       // Filter name matching only with name.official and name.common
-      const filteredArrayOfCountries = isFilterNeccessary
-        ? DataProcessMdl.filterResult(arrayOfCountries, processedValue)
+      DataStorage.filteredArrayOfCountries = DataStorage.isFilterNeccessary
+        ? DataProcessMdl.filterResult(
+            arrayOfCountries,
+            DataStorage.processedValue
+          )
         : arrayOfCountries;
       // If there were no matches (including checking name.official and name.common)
-      if (filteredArrayOfCountries.length === 0) {
+      if (DataStorage.filteredArrayOfCountries.length === 0) {
         RenderMdl.cleanOutput();
         NotifyMdl.showNotification(Params.noMatchesMessage, "failure");
         return;
       }
       // If only one country matches
-      if (filteredArrayOfCountries.length === 1) {
-        const preparedCountryInfo = DataProcessMdl.prepareCountryInfo({
-          countryInfo: filteredArrayOfCountries[0],
+      if (DataStorage.filteredArrayOfCountries.length === 1) {
+        DataStorage.oneCountryInfo = DataProcessMdl.prepareCountryInfo({
+          countryInfo: DataStorage.filteredArrayOfCountries[0],
           short: true,
         });
-        console.log(preparedCountryInfo);
-        PixabayMdl.saveQueriesForPixabay(preparedCountryInfo);
-        RenderMdl.renderCountryInfo(preparedCountryInfo);
+        // console.log(DataStorage.oneCountryInfo);
+        RenderMdl.renderCountryInfo();
         handleShowMoreInformation();
         return;
       }
       // If 2 - 10 countries match
-      if (filteredArrayOfCountries.length <= Params.LIMIT_LIST_RESULT) {
-        DataProcessMdl.processListOfCountries(filteredArrayOfCountries);
-        // Save result to Session Storage
-        StorageMdl.save(Params.LOCAL_STORAGE_KEY, filteredArrayOfCountries);
-        RenderMdl.renderCountryList(filteredArrayOfCountries);
+      if (
+        DataStorage.filteredArrayOfCountries.length <= Params.LIMIT_LIST_RESULT
+      ) {
+        DataProcessMdl.processListOfCountries(
+          DataStorage.filteredArrayOfCountries
+        );
+        RenderMdl.renderCountryList();
         return;
       }
       // If more than 10 countries match
-      if (filteredArrayOfCountries.length > 10) {
+      if (
+        DataStorage.filteredArrayOfCountries.length > Params.LIMIT_LIST_RESULT
+      ) {
         RenderMdl.cleanOutput();
         NotifyMdl.showNotification(Params.exceedLimitMatchesMessage, "info");
       }
@@ -105,18 +115,15 @@ function processFetchResult({
 function handleCountryListClick({ target }) {
   const button = target.closest(".country-list__btn");
   if (!button) return;
+  // Get index of chosen country
   const index = +button.dataset.index;
-  const savedCountryList = StorageMdl.load(Params.LOCAL_STORAGE_KEY);
-  if (!savedCountryList) {
-    return;
-  }
   RenderMdl.cleanOutput();
-  const preparedCountryInfo = DataProcessMdl.prepareCountryInfo({
-    countryInfo: savedCountryList[index],
+  DataStorage.oneCountryInfo = DataProcessMdl.prepareCountryInfo({
+    countryInfo: DataStorage.filteredArrayOfCountries[index],
     short: true,
   });
-  PixabayMdl.saveQueriesForPixabay(preparedCountryInfo);
-  RenderMdl.renderCountryInfo(preparedCountryInfo);
+  // PixabayMdl.saveQueriesForPixabay(preparedCountryInfo);
+  RenderMdl.renderCountryInfo();
   handleShowMoreInformation();
 }
 
@@ -127,27 +134,18 @@ function handleShowMoreInformation() {
     NotifyMdl.showLoadingInfo();
     target.parentNode.removeChild(target);
 
-    // Fetch links for gallery
-    PixabayMdl.getPixabayInfoForMarkup().then((arrResults) => {
-      // Get random images for gallery
-      const arrImagesForGallery = PixabayMdl.getArrayForGallery(arrResults);
-      console.log(arrImagesForGallery);
-      if (arrImagesForGallery.length > 0) {
-        RenderMdl.renderGallery(arrImagesForGallery);
-        // Initialize lightbox
-        RefsMdl.lightboxInstance = PixabayMdl.initLightBox();
-      }
-    });
+    PixabayMdl.renderGallery();
 
     // Fetch all info about country by ccn3 code
-    FetchMdl.prepareToFetch({ listOfCodes: target.dataset.ccn3 })
-      .then((countryInfo) => {
+    FetchMdl.fetchCountriesByCodes({ listOfCodes: target.dataset.ccn3 })
+      .then((extendedCountryInfo) => {
+        DataStorage.extendedOneCountryInfo = extendedCountryInfo[0];
         NotifyMdl.hideLoadingInfo();
-        const preparedCountryInfo = DataProcessMdl.prepareCountryInfo({
-          countryInfo: countryInfo[0],
+        DataStorage.extendedOneCountryInfo = DataProcessMdl.prepareCountryInfo({
+          countryInfo: DataStorage.extendedOneCountryInfo,
         });
 
-        RenderMdl.renderMoreInfo(preparedCountryInfo);
+        RenderMdl.renderMoreInfo();
       })
       .catch(handleBadResponse);
 
@@ -174,7 +172,6 @@ function handleBadResponse(error) {
 RefsMdl.loadingInfoEl.insertAdjacentText("beforeend", Params.loadingMessage);
 
 RefsMdl.inputEl.addEventListener("input", NotifyMdl.showLoadingInfo);
-RefsMdl.inputEl.addEventListener("focus", handleInputChange);
 RefsMdl.countryListEl.addEventListener("click", handleCountryListClick);
 RefsMdl.inputEl.addEventListener(
   "input",
